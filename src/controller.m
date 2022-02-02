@@ -1,29 +1,26 @@
-% Experiment parameters
-alpha = [0.75:0.25:3];
-n_D = 50;
-N = 40;
-rates = [];
+N = 20;
+alpha = [0.25:0.25:10];
+errors = [];
+n_D = 100;
 
-% Run experiments
-disp("Starting...")
 for a = alpha
-    disp("Alpha = " + a)
-    successful = 0;
+    disp(strcat("INFO: Running for alpha: ", string(a)))
+    average = zeros(1, n_D);
+
     for n = 1 : n_D
-        D = data(round(a * N), N);
-        [~, success] = perceptron(D, a);
-        if success
-            successful = successful + 1;
-        end
+        P = round(a * N);
+        D = data(P, N);
+        [~, error] = perceptron(D, a);
+        average(n) = error;
     end
-    rates = [rates, successful / n_D];
+    errors = [errors, mean(average)];
 end
 
-% Plot success rate curve
+disp(alpha)
+
 figure, hold on;
-stairs(alpha, rates)
-plot(alpha, rates)
+plot(alpha, errors)
 ylim([0 1])
-title("Success rate of Perceptron vs P/N")
+title("Generalization Error over P/N")
 xlabel("P/N")
-ylabel("Success Rate")
+ylabel("Generalization Error")
